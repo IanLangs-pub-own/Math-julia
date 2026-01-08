@@ -1,0 +1,19 @@
+println(input("hola: "))
+
+x::Z = 2
+
+z::R = 2
+
+p::Z = 0
+
+z = 0
+
+p = 9
+
+a::Z = 1
+
+if z==0
+    println(x,z,p,a)
+else
+    println("error")
+end
