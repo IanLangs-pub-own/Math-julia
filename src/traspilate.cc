@@ -1,5 +1,28 @@
 #include "transpilate.hpp"
 
+
+std::string regex_replace_fn(
+    const std::string& input,
+    const std::regex& re,
+    std::function<std::string(const std::smatch&)> fn
+) {
+    std::string result;
+    std::sregex_iterator it(input.begin(), input.end(), re);
+    std::sregex_iterator end;
+
+    size_t last = 0;
+
+    for (; it != end; ++it) {
+        result += input.substr(last, it->position() - last);
+        result += fn(*it);
+        last = it->position() + it->length();
+    }
+
+    result += input.substr(last);
+    return result;
+}
+
+
 namespace verify {
 
 bool types(const std::string& code, const std::string& file) {
@@ -7,7 +30,7 @@ bool types(const std::string& code, const std::string& file) {
 
     // Solo asignación simple '=' (excluye +=, ==, etc.)
     std::regex assign(
-        R"(^\s*(?!.*(==|!=|<=|>=|=>|\+=|-=|\*=|/=|%=))(.+?)\s*=\s*(.+)$)"
+        R"(^\s*(?!.*(==|!=|<=|>=|=>|\+=|-=|\*=|/=|%=))(.+?)\s*:?=\s*(.+)$)"
     );
 
     // Identificador válido
@@ -40,11 +63,8 @@ bool types(const std::string& code, const std::string& file) {
 
             // Si no estaba declarado antes, debe tener tipo
             if (declared.count(var) == 0) {
-                if (line.find("#no-strict") != std::string::npos) {
-                    declared.insert(var);
-                    continue;
-                }
-                if (!has_type) {
+                if ((!has_type) && (line.find("#no-strict") == std::string::npos && line.find(":=") == std::string::npos)) {
+
                     std::cerr
                         << "Type error on line " << lineno
                         << " in file " << file
@@ -69,6 +89,25 @@ std::string map(const std::string& code, const std::map<std::string, std::string
     for (auto [k, v] : map) {
         result = std::regex_replace(result, std::regex(k), v);
     }
+    return result;
+}
+
+std::string formatStrings(const std::string& code) {
+    std::string result = code;
+    std::regex pattern("f\"((?:\\\\.|[^\"\\\\])*)\"");
+    result = regex_replace_fn(result, pattern, [](const std::smatch& m) {
+    std::string content = m[1].str();
+
+    content = std::regex_replace(content, std::regex(R"(\{\{)"), "____LBRACE____");
+    content = std::regex_replace(content, std::regex(R"(\}\})"), "____RBRACE____");
+
+    content = std::regex_replace(content, std::regex(R"(\{([^{}]+)\})"), R"($($1))");
+
+    content = std::regex_replace(content, std::regex("____LBRACE____"), "{");
+    content = std::regex_replace(content, std::regex("____RBRACE____"), "}");
+
+    return "\"" + content + "\"";
+});
     return result;
 }
 

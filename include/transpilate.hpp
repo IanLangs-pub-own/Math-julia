@@ -15,10 +15,17 @@ namespace translate {
 
     // Diccionario de tipos para transpilar a Julia
     inline std::map<std::string, std::string> dict = {
-        {"R", "Float64"},
-        {"Z", "Int64"},
-        {"str", "String"},
+        {"\\bC\\b", "Complex"},
+        {"\\bQ\\b", "Rational{Int64}"},
+        {"\\bR\\b", "Float64"},
+        {"\\bZ\\b", "Int64"},
+        {"\\bN\\b", "UInt64"},
+        {"Str", "String"},
         {"Array(\\d+)d\\{(.*?)\\}", "Array{$2, $1}"},
-        {"input\\((.*)\\)", "(prompt -> (print(prompt); readline()))($1)"}
+        {"input\\((.*)\\)", "(prompt -> (print(prompt); readline()))($1)"},
+        {":=", "="},
+        {"printf\\((.*)\\)","@printf($1)"}
     };
+
+    std::string formatStrings(const std::string& code);
 }

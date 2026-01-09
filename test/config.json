@@ -1,8 +1,9 @@
 {
-    "strict": true,
     "Files": [
         "test1.mjl",
-        "test2.mjl"
+        "test2.mjl",
+        "test3.mjl"
     ],
-    "Main": "test2.mjl"
+    "Main": "test3.mjl",
+    "strict": true
 }

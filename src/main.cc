@@ -6,6 +6,20 @@
 #include <nlohmann/json.hpp>
 #include <regex>
 #include <cstdlib>
+#include <sstream>
+#include <readline/readline.h>
+#include <string>
+std::vector<std::string> split(const std::string& input) {
+    std::vector<std::string> result;
+    std::stringstream ss(input);
+    std::string word;
+
+    while (ss >> word) {
+        result.push_back(word);
+    }
+
+    return result;
+}
 
 using json = nlohmann::json;
 
@@ -30,7 +44,7 @@ bool runTranspile(const std::vector<std::string>& files, bool strict) {
 
         // Traducir
         code = translate::map(code, translate::dict);
-
+        code = translate::formatStrings(code);
         // Guardar .jl
         std::ofstream jlfile(std::regex_replace(filename, std::regex("\\.mjl$"), ".jl"));
         if (!jlfile.is_open()) {
@@ -44,9 +58,46 @@ bool runTranspile(const std::vector<std::string>& files, bool strict) {
 
 int main(int argc, char** RAWargv) {
     if (argc < 2) {
-        std::cerr << "Pase argumentos, por ejemplo: " << RAWargv[0] << " config.json\n";
+        std::cerr << "Uso:\n";
+        std::cerr << "  " << RAWargv[0] << " init\n";
+        std::cerr << "  " << RAWargv[0] << " config.json\n";
+        std::cerr << "  " << RAWargv[0] << " config.json julia\n";
         return 1;
     }
+
+
+    if (std::string(RAWargv[1]) == "init") {
+        std::ofstream config("config.json");
+        if (!config.is_open()) {
+            std::cerr << "No se pudo crear config.json\n";
+            return 1;
+        }
+
+        std::string input;
+        json jsonConfig;
+
+        std::cout << "Typing Strict mode? [Y/n]: ";
+        std::cin >> input;
+        jsonConfig["strict"] = !(input == "n" || input == "N");
+
+        std::cout << "Main file: ";
+        std::cin >> input;
+        jsonConfig["Main"] = input;
+
+        std::cout << "Files (space separated): ";
+        std::cin.ignore();
+        std::getline(std::cin, input);
+
+        std::vector<std::string> files = split(input);
+        jsonConfig["Files"] = files;
+
+        config << jsonConfig.dump(4);
+        config.close();
+
+        std::cout << "config.json creado.\n";
+        return 0;
+    }
+
 
     std::ifstream jfile(RAWargv[1]);
     if (!jfile.is_open()) {
