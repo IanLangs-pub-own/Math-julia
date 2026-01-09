@@ -1,9 +1,13 @@
 {
     "Files": [
-        "test1.mjl",
-        "test2.mjl",
-        "test3.mjl"
+        "fStr.mjl",
+        "full_test.mjl",
+        "input.mjl",
+        "printf.mjl",
+        "to_bool.mjl",
+        "types.mjl",
+        "no-strict.mjl"
     ],
-    "Main": "test3.mjl",
+    "Main": "full_test.mjl",
     "strict": true
 }

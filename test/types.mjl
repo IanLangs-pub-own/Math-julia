@@ -1,0 +1,6 @@
+# Declaración simple
+x::Z = 5
+y::R = 3.14
+z::Str = "hello" # sin tipo explícito
+r::Complex = 1 + 2im
+q::Q = 2//3

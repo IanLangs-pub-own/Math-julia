@@ -6,6 +6,8 @@
 #include <map>
 #include <iostream>
 
+std::string regex_replace_fn( const std::string& input, const std::regex& re, std::function<std::string(const std::smatch&)> fn);
+
 namespace verify {
     bool types(const std::string& code, const std::string& file);
 }
@@ -24,8 +26,12 @@ namespace translate {
         {"Array(\\d+)d\\{(.*?)\\}", "Array{$2, $1}"},
         {"input\\((.*)\\)", "(prompt -> (print(prompt); readline()))($1)"},
         {":=", "="},
-        {"printf\\((.*)\\)","@printf($1)"}
+        {"printf\\((.*)\\)","@printf($1)"},
     };
 
     std::string formatStrings(const std::string& code);
+
+    bool evalToBoolean(const std::string& literal);
+
+    std::string toBooleanReplace(const std::smatch& m);
 }

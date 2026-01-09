@@ -1,0 +1,11 @@
+x::Z = 0
+y::Str = "Hello"
+z::R = 3.5
+
+if to_bool(x)
+    printf("X is true\n")
+else
+    printf("X is false\n")
+end
+
+println(f"Greeting: {y}, number: {z}")

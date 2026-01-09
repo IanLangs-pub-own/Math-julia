@@ -1,6 +1,5 @@
 #include "transpilate.hpp"
 
-
 std::string regex_replace_fn(
     const std::string& input,
     const std::regex& re,
@@ -109,6 +108,53 @@ std::string formatStrings(const std::string& code) {
     return "\"" + content + "\"";
 });
     return result;
+}
+
+// Función helper que evalúa un valor a booleano en tiempo de transpile
+bool evalToBoolean(const std::string& literal) {
+    std::string s = literal;
+
+    // trim
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+        [](unsigned char ch){ return !std::isspace(ch); }));
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+        [](unsigned char ch){ return !std::isspace(ch); }).base(), s.end());
+
+    // lowercase
+    std::transform(s.begin(), s.end(), s.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+
+    // bool literal
+    if (s == "true") return true;
+    if (s == "false") return false;
+
+    // número
+    try {
+        double num = std::stod(s);
+        return num != 0;
+    } catch(...) {}
+
+    // string entre comillas
+    if ((s.front() == '"' && s.back() == '"') ||
+        (s.front() == '\'' && s.back() == '\'')) {
+        std::string content = s.substr(1, s.size() - 2);
+        // trim
+        content.erase(content.begin(), std::find_if(content.begin(), content.end(),
+            [](unsigned char ch){ return !std::isspace(ch); }));
+        content.erase(std::find_if(content.rbegin(), content.rend(),
+            [](unsigned char ch){ return !std::isspace(ch); }).base(), content.end());
+        return !content.empty();
+    }
+
+    // por defecto true
+    return !s.empty();
+}
+
+// Función compatible con regex_replace_fn
+std::string toBooleanReplace(const std::smatch& m) {
+    std::string arg = m[1].str();
+    bool val = evalToBoolean(arg);
+    return val ? "true" : "false";
 }
 
 } // namespace translate

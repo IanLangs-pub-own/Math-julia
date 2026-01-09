@@ -1,0 +1,4 @@
+name::Str = "Ian"
+age::Str = 20
+println(f"Hello {name}, you are {age} years old")
+println(f"Escaped braces: {{ this }}")

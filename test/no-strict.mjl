@@ -1,0 +1,12 @@
+#no-strict sirve para no usar notacion de tipos cuando strict es true, o para evitar errores cuando usas = en cosas que no sea asignaciones
+#tambien esta := que transpila a =
+
+f(x) := 2x * im
+
+x := 2
+
+g(y) = 2y * im #no-strict
+
+y = 2 #no-strict
+
+z = 2 #error si strict es true

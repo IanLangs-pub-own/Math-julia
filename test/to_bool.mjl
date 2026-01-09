@@ -1,0 +1,8 @@
+println(to_bool(true))
+println(to_bool(false))
+println(to_bool(0))
+println(to_bool(42))
+println(to_bool(""))
+println(to_bool("hello"))
+println(to_bool("   "))    # solo espacios
+println(to_bool(nil))      # anything else

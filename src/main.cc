@@ -9,6 +9,8 @@
 #include <sstream>
 #include <readline/readline.h>
 #include <string>
+#include "globals.hpp"
+#include <set>
 std::vector<std::string> split(const std::string& input) {
     std::vector<std::string> result;
     std::stringstream ss(input);
@@ -42,9 +44,14 @@ bool runTranspile(const std::vector<std::string>& files, bool strict) {
             if (!verify::types(code, filename)) return false;
         }
 
+        code = regex_replace_fn(code, std::regex("to_bool\\((.*?)\\)"), translate::toBooleanReplace);
+
         // Traducir
         code = translate::map(code, translate::dict);
         code = translate::formatStrings(code);
+        if (code.find("@printf(") != std::string::npos) {
+            code = "using Printf\n" + code;
+        }
         // Guardar .jl
         std::ofstream jlfile(std::regex_replace(filename, std::regex("\\.mjl$"), ".jl"));
         if (!jlfile.is_open()) {
@@ -65,11 +72,13 @@ int main(int argc, char** RAWargv) {
         return 1;
     }
 
-
-    if (std::string(RAWargv[1]) == "init") {
+    std::string arg1 = RAWargv[1];
+    if (std::string(RAWargv[1]) == ".") arg1 = "config.json";
+    if (std::string(arg1) == "init") {
         std::ofstream config("config.json");
         if (!config.is_open()) {
             std::cerr << "No se pudo crear config.json\n";
+    
             return 1;
         }
 
@@ -97,11 +106,16 @@ int main(int argc, char** RAWargv) {
         std::cout << "config.json creado.\n";
         return 0;
     }
+    else if (arg1 == "-v" || arg1 == "-V" || arg1 == "--version") {
+        std::cout << "math-julia version " << langData::version << " (" << langData::date <<")\n";
+        return 0;
+    }
 
 
-    std::ifstream jfile(RAWargv[1]);
+    std::ifstream jfile(arg1);
     if (!jfile.is_open()) {
-        std::cerr << "No se pudo abrir el archivo " << RAWargv[1] << '\n';
+        std::cerr << "No se pudo abrir el archivo " << arg1 << '\n'
+                  << "Prueba hacer " << RAWargv[0] << " init && " << RAWargv[0] << " .\n";
         return 1;
     }
 

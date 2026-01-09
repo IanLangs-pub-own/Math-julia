@@ -1,2 +1,0 @@
-x::N = N(1)
-println(f"{{ x = {x} }}") #no-strict
