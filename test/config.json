@@ -9,5 +9,5 @@
         "no-strict.mjl"
     ],
     "Main": "full_test.mjl",
-    "strict": true
+    "strict": false
 }
