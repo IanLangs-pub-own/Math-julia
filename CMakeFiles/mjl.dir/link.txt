@@ -1,0 +1,1 @@
+/usr/bin/g++ CMakeFiles/mjl.dir/src/main.cc.o CMakeFiles/mjl.dir/src/traspilate.cc.o -o bin/mjl 

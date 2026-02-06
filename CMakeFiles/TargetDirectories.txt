@@ -1,0 +1,4 @@
+/home/ian/archivos/Math-julia/CMakeFiles/mjl.dir
+/home/ian/archivos/Math-julia/CMakeFiles/mjl-nightly.dir
+/home/ian/archivos/Math-julia/CMakeFiles/edit_cache.dir
+/home/ian/archivos/Math-julia/CMakeFiles/rebuild_cache.dir

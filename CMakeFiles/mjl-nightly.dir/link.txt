@@ -1,0 +1,1 @@
+/usr/bin/g++ "CMakeFiles/mjl-nightly.dir/src/main.cc.o" "CMakeFiles/mjl-nightly.dir/src/traspilate.cc.o" -o bin/mjl-nightly 

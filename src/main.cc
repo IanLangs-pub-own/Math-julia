@@ -27,6 +27,7 @@ using json = nlohmann::json;
 
 // Función helper para transpilar
 bool runTranspile(const std::vector<std::string>& files, bool strict) {
+
     for (auto& filename : files) {
         // Leer archivo completo
         std::ifstream mjlfile(filename);
@@ -40,6 +41,8 @@ bool runTranspile(const std::vector<std::string>& files, bool strict) {
         mjlfile.close();
 
         // Verificar tipos
+        std::regex coments(R"((?!#no-include)#([^\n]*))");
+        code = std::regex_replace(code, coments, "");
         if (strict) {
             if (!verify::types(code, filename)) return false;
         }

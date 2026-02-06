@@ -2,6 +2,6 @@
 #include <string>
 
 namespace langData {
-    inline std::string version = "1.0.0";
-    inline std::string date = "9/1/2026";
+    inline std::string version = "1.1.0";
+    inline std::string date = "10/1/2026";
 }
